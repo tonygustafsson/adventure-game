@@ -1,0 +1,46 @@
+body {
+	margin: 0;
+	background: #000;
+}
+
+#svg-container {
+	float: left;
+	width: 80vw;
+	height: 90vh;
+	overflow: hidden;
+}
+
+svg {
+	width: 100%;
+	height: 100%;
+}	height: 100%;
+
+.object {
+	opacity: 1;
+	transition: opacity .25s;
+}
+
+.invisible {
+	opacity: 0;
+}
+
+.reset-objects {
+	position: absolute;
+	top: 10px;
+	left: 10px;
+	opacity: .5;
+}
+
+#inventory {
+	float: left;
+	width: 20vw;
+}
+
+#inventory svg {
+	max-width: 100%;
+}
+
+#inventory image {
+	width: 100%;
+	height: 100%;
+}
