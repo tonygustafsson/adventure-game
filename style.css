@@ -1,13 +1,23 @@
 body {
 	margin: 0;
 	background: #000;
+	color: #fff;
+	font-family: georgia;
+}
+
+h1 {
+	margin: .5em 2em;
+}
+
+#game {
+	float: left;
 }
 
 #svg-container {
 	float: left;
-	width: 80vw;
-	height: 90vh;
-	overflow: hidden;
+	width: 77vw;
+	height: 85vh;
+	padding-left: 2vw;
 }
 
 svg {
@@ -28,8 +38,7 @@ svg {
 .reset-objects {
 	position: absolute;
 	top: 10px;
-	left: 10px;
-	opacity: .5;
+	right: 10px;
 }
 
 #inventory {
@@ -37,8 +46,15 @@ svg {
 	width: 20vw;
 }
 
+#inventory h2 {
+	margin: 0;
+}
+
 #inventory svg {
-	max-width: 100%;
+	max-width: 40%;
+	max-height: 100px;
+	padding: 5%;
+	-webkit-filter: sepia(50%);
 }
 
 #inventory image {

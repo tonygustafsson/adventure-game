@@ -1,5 +1,6 @@
 var objects = [],
 	svgContainer = document.getElementById("svg-container"),
+	inventoryItems = document.getElementById("inventory-items"),
 	roomImg = 'svg/room.svg';
 
 var getObjects = function () {
@@ -16,15 +17,18 @@ var getObjects = function () {
 };
 
 var saveToInventory = function (object) {
-	var inventory = document.getElementById('inventory'),
-		svg = document.createElementNS("http://www.w3.org/2000/svg", "svg"),
+	var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg"),
 		image = object.cloneNode(true);
 		
 	image.setAttribute('x', 0);
 	image.setAttribute('y', 0);
 	image.setAttribute('data-object-reference', object.id);
 	image.id = 'object-reference-' + object.id;
-	image.classList.remove('invisible');
+
+	setTimeout(function() {
+		//Fade out
+		image.classList.remove('invisible');
+	}, 100);
 	
 	svg.addEventListener('click', function() {
 		//Remove from inventory on click
@@ -34,20 +38,22 @@ var saveToInventory = function (object) {
 	});
 	
 	svg.appendChild(image);
-	inventory.appendChild(svg);
+	inventoryItems.appendChild(svg);
 };
 
 var removeFromInventory = function (object) {
-	var inventory = document.getElementById('inventory'),
-		inventoryObject = document.getElementById('object-reference-' + object.id);
+	var inventoryObject = document.getElementById('object-reference-' + object.id);
 	
-	inventory.removeChild(inventoryObject.parentNode);
+	inventoryObject.classList.add('invisible');
+	
+	setTimeout(function() {
+		//Fade out
+		inventoryItems.removeChild(inventoryObject.parentNode);
+	}, 100);
 };
 
 var clearInventory = function (object) {
-	var inventory = document.getElementById('inventory');
-
-	inventory.innerHTML = "";
+	inventoryItems.innerHTML = "";
 };
 
 var hideObject = function (object) {
