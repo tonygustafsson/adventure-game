@@ -1,5 +1,6 @@
 var objects = [],
 	svgContainer = document.getElementById("svg-container"),
+	background = document.getElementById("background"),
 	inventoryItems = document.getElementById("inventory-items"),
 	roomImg = 'svg/room.svg';
 
@@ -25,24 +26,22 @@ var saveToInventory = function (object) {
 	image.setAttribute('data-object-reference', object.id);
 	image.id = 'object-reference-' + object.id;
 
+	svg.addEventListener('click', function() {
+		//Show take button
+		selectInventoryObject(image);
+	});
+
 	setTimeout(function() {
 		//Fade out
 		image.classList.remove('invisible');
 	}, 100);
-	
-	svg.addEventListener('click', function() {
-		//Remove from inventory on click
-		var svgObject = document.getElementById(image.getAttribute('data-object-reference'));
-		removeFromInventory(object);
-		showObject(svgObject);
-	});
 	
 	svg.appendChild(image);
 	inventoryItems.appendChild(svg);
 };
 
 var removeFromInventory = function (object) {
-	var inventoryObject = document.getElementById('object-reference-' + object.id);
+	var inventoryObject = document.getElementById(object.id);
 	
 	inventoryObject.classList.add('invisible');
 	
@@ -57,6 +56,7 @@ var clearInventory = function (object) {
 };
 
 var hideObject = function (object) {
+	object.classList.remove('selected');
 	object.classList.add('invisible');
 	localStorage.setItem(object.id, "invisible");
 };
@@ -65,6 +65,49 @@ var showObject = function (object) {
 	object.classList.remove('invisible');
 	localStorage.removeItem(object.id);
 };
+
+var deselectAllObjects = function () {
+	objects.forEach(function(object) {
+		object.classList.remove('selected');
+		document.getElementById('action-take').classList.remove('action-button-visible');
+	});
+};
+
+var selectObject = function (object) {
+	object.classList.add('selected');
+	document.getElementById('action-take').classList.add('action-button-visible');
+	document.getElementById('action-leave').classList.remove('action-button-visible');
+};
+
+var selectInventoryObject = function (object) {
+	object.classList.add('selected');
+	document.getElementById('action-leave').classList.add('action-button-visible');
+	document.getElementById('action-take').classList.remove('action-button-visible');
+};
+
+(function initTakeButton() {
+	var takeButton = document.getElementById('action-take');
+	
+	takeButton.addEventListener('click', function () {
+		var selectedObject = document.querySelector('.selected');
+		hideObject(selectedObject);
+		saveToInventory(selectedObject);
+		takeButton.classList.remove('action-button-visible');
+	});
+})();
+
+(function initLeaveButton() {
+	var leaveButton = document.getElementById('action-leave');
+	
+	leaveButton.addEventListener('click', function () {
+		var selectedObject = document.querySelector('#inventory-items .selected'),
+			svgObject = document.getElementById(selectedObject.getAttribute('data-object-reference'));
+			
+		showObject(svgObject);
+		removeFromInventory(selectedObject);
+		leaveButton.classList.remove('action-button-visible');
+	});
+})();
 
 (function loadSvg() {
 	var ajax = new XMLHttpRequest();
@@ -80,14 +123,18 @@ var showObject = function (object) {
 		objects.forEach(function(object) {
 			object.classList.add('object');
 			
+			document.getElementById('background').addEventListener('click', function() {
+				deselectAllObjects();
+			});
+			
 			if (localStorage.getItem(object.id) == "invisible") {
 				hideObject(object);
 				saveToInventory(object);
 			}
 			
 			object.addEventListener('click', function() {
-				hideObject(object);
-				saveToInventory(object);
+				deselectAllObjects();
+				selectObject(object);
 			});
 		});
 	};
