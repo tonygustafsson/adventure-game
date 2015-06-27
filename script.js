@@ -1,7 +1,6 @@
 var objects = [],
 	svgContainer = document.getElementById("svg-container"),
 	background = document.getElementById("background"),
-	inventoryItems = document.getElementById("inventory-items"),
 	roomImg = 'svg/room.svg';
 
 var actions = {
@@ -27,11 +26,7 @@ var actions = {
 	},
 	initLeaveButton: function () {
 		this.leaveButton.addEventListener('click', function () {
-			var inventoryObject = document.querySelector('#inventory-items .selected'),
-				objectRef = inventoryObject.getAttribute('data-object-reference'),
-				object = document.getElementById(objectRef);
-						
-			actions.leave(inventoryObject, object);
+			actions.leave(inventory.selectedItem());
 		});
 	},
 	initResetButton: function () {
@@ -41,12 +36,15 @@ var actions = {
 	},
 	take: function(object) {
 		hideObject(object);
-		saveToInventory(object);
+		inventory.save(object);
 		this.deactivateAllButtons();
 	},
-	leave: function(inventoryObject, object) {
+	leave: function(inventoryObject) {
+		var objectRef = inventoryObject.getAttribute('data-object-reference'),
+			object = document.getElementById(objectRef);
+		
 		showObject(object);
-		removeFromInventory(inventoryObject);
+		inventory.remove(inventoryObject);
 		this.deactivateAllButtons();
 	},
 	reset: function () {
@@ -56,7 +54,62 @@ var actions = {
 			showObject(object);
 		});
 		
-		clearInventory();
+		inventory.clear();
+		this.deactivateAllButtons();
+	}
+};
+
+var inventory = {
+	itemContainer: document.getElementById("inventory-items"),
+	items: document.getElementById("inventory-items").childNodes,
+	selectedItem: function () {
+		return document.querySelector('#inventory-items .selected');
+	},
+	select: function (object) {
+		this.deselectAll();
+		object.parentNode.classList.add('selected');
+		actions.deactivateAllButtons();
+		actions.activateButton(actions.leaveButton);
+	},
+	deselectAll: function () {
+		[].forEach.call(this.items, function (item) {
+			item.classList.remove('selected');
+		});
+	},
+	save: function (object) {
+		var newSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg"),
+			image = object.cloneNode(true);
+			
+		image.setAttribute('x', 0);
+		image.setAttribute('y', 0);
+		newSvg.setAttribute('data-object-reference', object.id);
+		newSvg.id = 'object-reference-' + object.id;
+	
+		newSvg.addEventListener('click', function() {
+			//Show take button
+			inventory.select(image);
+		});
+	
+		setTimeout(function() {
+			//Fade out
+			image.classList.remove('invisible');
+		}, 100);
+		
+		newSvg.appendChild(image);
+		this.itemContainer.appendChild(newSvg);
+	},
+	remove: function (object) {
+		var inventoryObject = document.getElementById(object.id);
+		
+		inventoryObject.classList.add('invisible');
+		
+		setTimeout(function() {
+			//Fade out
+			inventory.itemContainer.removeChild(inventoryObject);
+		}, 100);
+	},
+	clear: function (object) {
+		this.itemContainer.innerHTML = "";
 	}
 };
 
@@ -75,44 +128,6 @@ var getObjects = function () {
 	});
 	
 	return objects;
-};
-
-var saveToInventory = function (object) {
-	var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg"),
-		image = object.cloneNode(true);
-		
-	image.setAttribute('x', 0);
-	image.setAttribute('y', 0);
-	image.setAttribute('data-object-reference', object.id);
-	image.id = 'object-reference-' + object.id;
-
-	svg.addEventListener('click', function() {
-		//Show take button
-		selectInventoryObject(image);
-	});
-
-	setTimeout(function() {
-		//Fade out
-		image.classList.remove('invisible');
-	}, 100);
-	
-	svg.appendChild(image);
-	inventoryItems.appendChild(svg);
-};
-
-var removeFromInventory = function (object) {
-	var inventoryObject = document.getElementById(object.id);
-	
-	inventoryObject.classList.add('invisible');
-	
-	setTimeout(function() {
-		//Fade out
-		inventoryItems.removeChild(inventoryObject.parentNode);
-	}, 100);
-};
-
-var clearInventory = function (object) {
-	inventoryItems.innerHTML = "";
 };
 
 var hideObject = function (object) {
@@ -144,12 +159,6 @@ var selectObject = function (object) {
 	}
 };
 
-var selectInventoryObject = function (object) {
-	object.classList.add('selected');
-	actions.deactivateAllButtons();
-	actions.activateButton(actions.leaveButton);
-};
-
 (function loadSvg() {
 	var ajax = new XMLHttpRequest();
 	
@@ -170,7 +179,7 @@ var selectInventoryObject = function (object) {
 			
 			if (localStorage.getItem(object.id) == "invisible") {
 				hideObject(object);
-				saveToInventory(object);
+				inventory.save(object);
 			}
 			
 			object.addEventListener('click', function() {
