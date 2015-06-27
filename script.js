@@ -1,8 +1,3 @@
-var objects = [],
-	svgContainer = document.getElementById("svg-container"),
-	background = document.getElementById("background"),
-	roomImg = 'svg/room.svg';
-
 var actions = {
 	takeButton: document.getElementById('action-take'),
 	leaveButton: document.getElementById('action-leave'),
@@ -20,8 +15,8 @@ var actions = {
 	},
 	initTakeButton: function () {
 		this.takeButton.addEventListener('click', function () {
-			var selectedObject = document.querySelector('.selected');
-			actions.take(selectedObject);
+			var selectedItem = document.querySelector('.selected');
+			actions.take(selectedItem);
 		});
 	},
 	initLeaveButton: function () {
@@ -30,28 +25,28 @@ var actions = {
 		});
 	},
 	initResetButton: function () {
-		document.getElementById('reset-objects').addEventListener('click', function() {
+		document.getElementById('reset-game').addEventListener('click', function() {
 			actions.reset();
 		});
 	},
-	take: function(object) {
-		hideObject(object);
-		inventory.save(object);
+	take: function(item) {
+		room.hideItem(item);
+		inventory.save(item);
 		this.deactivateAllButtons();
 	},
-	leave: function(inventoryObject) {
-		var objectRef = inventoryObject.getAttribute('data-object-reference'),
-			object = document.getElementById(objectRef);
+	leave: function(inventoryItem) {
+		var itemRef = inventoryItem.getAttribute('data-item-reference'),
+			item = document.getElementById(itemRef);
 		
-		showObject(object);
-		inventory.remove(inventoryObject);
+		room.showItem(item);
+		inventory.remove(inventoryItem);
 		this.deactivateAllButtons();
 	},
 	reset: function () {
 		localStorage.clear();
 
-		objects.forEach(function(object) {
-			showObject(object);
+		room.items.forEach(function(item) {
+			room.showItem(item);
 		});
 		
 		inventory.clear();
@@ -65,9 +60,9 @@ var inventory = {
 	selectedItem: function () {
 		return document.querySelector('#inventory-items .selected');
 	},
-	select: function (object) {
+	select: function (item) {
 		this.deselectAll();
-		object.parentNode.classList.add('selected');
+		item.parentNode.classList.add('selected');
 		actions.deactivateAllButtons();
 		actions.activateButton(actions.leaveButton);
 	},
@@ -76,14 +71,14 @@ var inventory = {
 			item.classList.remove('selected');
 		});
 	},
-	save: function (object) {
+	save: function (item) {
 		var newSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg"),
-			image = object.cloneNode(true);
+			image = item.cloneNode(true);
 			
 		image.setAttribute('x', 0);
 		image.setAttribute('y', 0);
-		newSvg.setAttribute('data-object-reference', object.id);
-		newSvg.id = 'object-reference-' + object.id;
+		newSvg.setAttribute('data-item-reference', item.id);
+		newSvg.id = 'item-reference-' + item.id;
 	
 		newSvg.addEventListener('click', function() {
 			//Show take button
@@ -98,94 +93,102 @@ var inventory = {
 		newSvg.appendChild(image);
 		this.itemContainer.appendChild(newSvg);
 	},
-	remove: function (object) {
-		var inventoryObject = document.getElementById(object.id);
+	remove: function (item) {
+		var inventoryItem = document.getElementById(item.id);
 		
-		inventoryObject.classList.add('invisible');
+		inventoryItem.classList.add('invisible');
 		
 		setTimeout(function() {
 			//Fade out
-			inventory.itemContainer.removeChild(inventoryObject);
+			inventory.itemContainer.removeChild(inventoryItem);
 		}, 100);
 	},
-	clear: function (object) {
+	clear: function () {
 		this.itemContainer.innerHTML = "";
 	}
 };
 
-actions.initTakeButton();
-actions.initLeaveButton();
-actions.initResetButton();
-
-var getObjects = function () {
-	var imageItems = document.getElementsByTagName('image'),
-		objects = [];
+var room = {
+	background: function () {
+		return document.getElementById("background");
+	},
+	container: function () {
+		return document.getElementById("svg-container");
+	},
+	image: "svg/room.svg",
+	items: [],
+	getItems: function () {
+		var imageItems = document.querySelectorAll('#svg-container image'),
+			itemList = [];
+			
+		[].forEach.call(imageItems, function(item) {
+			if (item.id != "background") {
+				itemList.push(item);
+			}
+		});
 		
-	[].forEach.call(imageItems, function(object) {
-		if (object.id != "background") {
-			objects.push(object);
+		return itemList;
+	},
+	selectItem: function (item) {
+		item.classList.add('selected');
+		actions.deactivateAllButtons();
+	
+		if (item.getAttribute('data-action-take') == "true") {
+			actions.activateButton(actions.takeButton);
 		}
-	});
-	
-	return objects;
-};
-
-var hideObject = function (object) {
-	object.classList.remove('selected');
-	object.classList.add('invisible');
-	localStorage.setItem(object.id, "invisible");
-};
-
-var showObject = function (object) {
-	object.classList.remove('invisible');
-	localStorage.removeItem(object.id);
-};
-
-var deselectAllObjects = function () {
-	actions.deactivateAllButtons();
-	
-	objects.forEach(function(object) {
-		object.classList.remove('selected');
-	});
-};
-
-var selectObject = function (object) {
-	object.classList.add('selected');
-
-	actions.deactivateAllButtons();
-
-	if (object.getAttribute('data-action-take') == "true") {
-		actions.activateButton(actions.takeButton);
+	},
+	deselectItem: function (item) {
+		item.classList.remove('selected');
+	},
+	deselectAllItems: function () {
+		actions.deactivateAllButtons();
+		
+		room.items.forEach(function(item) {
+			item.classList.remove('selected');
+		});
+	},
+	showItem: function (item) {
+		item.classList.remove('invisible');
+		localStorage.removeItem(item.id);
+	},
+	hideItem: function (item) {
+		this.deselectItem(item);
+		item.classList.add('invisible');
+		localStorage.setItem(item.id, "invisible");
+	},
+	load: function () {
+		var ajax = new XMLHttpRequest();
+		
+		ajax.open("GET", room.image, true);
+		ajax.send();
+		ajax.onload = function(e) {
+			room.container().innerHTML = ajax.responseText;
+			room.items = room.getItems();
+			
+			room.items.forEach(function(item) {
+				item.classList.add('item');
+				
+				room.background().addEventListener('click', function() {
+					room.deselectAllItems();
+				});
+				
+				if (localStorage.getItem(item.id) == "invisible") {
+					room.hideItem(item);
+					inventory.save(item);
+				}
+				
+				item.addEventListener('click', function() {
+					room.deselectAllItems();
+					room.selectItem(item);
+				});
+			});
+		};
 	}
 };
 
-(function loadSvg() {
-	var ajax = new XMLHttpRequest();
-	
-	ajax.open("GET", roomImg, true);
-	ajax.send();
-	ajax.onload = function(e) {
-		var div = svgContainer;
-		div.innerHTML = ajax.responseText;
-		
-		objects = getObjects();
-		
-		objects.forEach(function(object) {
-			object.classList.add('object');
-			
-			document.getElementById('background').addEventListener('click', function() {
-				deselectAllObjects();
-			});
-			
-			if (localStorage.getItem(object.id) == "invisible") {
-				hideObject(object);
-				inventory.save(object);
-			}
-			
-			object.addEventListener('click', function() {
-				deselectAllObjects();
-				selectObject(object);
-			});
-		});
-	};
+(function initialize() {
+	room.load();
+	actions.initTakeButton();
+	actions.initLeaveButton();
+	actions.initResetButton();
 })();
