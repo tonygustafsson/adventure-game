@@ -4,6 +4,66 @@ var objects = [],
 	inventoryItems = document.getElementById("inventory-items"),
 	roomImg = 'svg/room.svg';
 
+var actions = {
+	takeButton: document.getElementById('action-take'),
+	leaveButton: document.getElementById('action-leave'),
+	activateButton: function (button) {
+		button.classList.add('action-button-visible');
+	},
+	deactivateButton: function (button) {
+		button.classList.remove('action-button-visible');	
+	},
+	deactivateAllButtons: function () {
+		var buttons = document.querySelectorAll('.action-button');	
+		[].forEach.call(buttons, function (button) {
+			button.classList.remove('action-button-visible');
+		});
+	},
+	initTakeButton: function () {
+		this.takeButton.addEventListener('click', function () {
+			var selectedObject = document.querySelector('.selected');
+			actions.take(selectedObject);
+		});
+	},
+	initLeaveButton: function () {
+		this.leaveButton.addEventListener('click', function () {
+			var inventoryObject = document.querySelector('#inventory-items .selected'),
+				objectRef = inventoryObject.getAttribute('data-object-reference'),
+				object = document.getElementById(objectRef);
+						
+			actions.leave(inventoryObject, object);
+		});
+	},
+	initResetButton: function () {
+		document.getElementById('reset-objects').addEventListener('click', function() {
+			actions.reset();
+		});
+	},
+	take: function(object) {
+		hideObject(object);
+		saveToInventory(object);
+		this.deactivateAllButtons();
+	},
+	leave: function(inventoryObject, object) {
+		showObject(object);
+		removeFromInventory(inventoryObject);
+		this.deactivateAllButtons();
+	},
+	reset: function () {
+		localStorage.clear();
+
+		objects.forEach(function(object) {
+			showObject(object);
+		});
+		
+		clearInventory();
+	}
+};
+
+actions.initTakeButton();
+actions.initLeaveButton();
+actions.initResetButton();
+
 var getObjects = function () {
 	var imageItems = document.getElementsByTagName('image'),
 		objects = [];
@@ -67,47 +127,28 @@ var showObject = function (object) {
 };
 
 var deselectAllObjects = function () {
+	actions.deactivateAllButtons();
+	
 	objects.forEach(function(object) {
 		object.classList.remove('selected');
-		document.getElementById('action-take').classList.remove('action-button-visible');
 	});
 };
 
 var selectObject = function (object) {
 	object.classList.add('selected');
-	document.getElementById('action-take').classList.add('action-button-visible');
-	document.getElementById('action-leave').classList.remove('action-button-visible');
+
+	actions.deactivateAllButtons();
+
+	if (object.getAttribute('data-action-take') == "true") {
+		actions.activateButton(actions.takeButton);
+	}
 };
 
 var selectInventoryObject = function (object) {
 	object.classList.add('selected');
-	document.getElementById('action-leave').classList.add('action-button-visible');
-	document.getElementById('action-take').classList.remove('action-button-visible');
+	actions.deactivateAllButtons();
+	actions.activateButton(actions.leaveButton);
 };
-
-(function initTakeButton() {
-	var takeButton = document.getElementById('action-take');
-	
-	takeButton.addEventListener('click', function () {
-		var selectedObject = document.querySelector('.selected');
-		hideObject(selectedObject);
-		saveToInventory(selectedObject);
-		takeButton.classList.remove('action-button-visible');
-	});
-})();
-
-(function initLeaveButton() {
-	var leaveButton = document.getElementById('action-leave');
-	
-	leaveButton.addEventListener('click', function () {
-		var selectedObject = document.querySelector('#inventory-items .selected'),
-			svgObject = document.getElementById(selectedObject.getAttribute('data-object-reference'));
-			
-		showObject(svgObject);
-		removeFromInventory(selectedObject);
-		leaveButton.classList.remove('action-button-visible');
-	});
-})();
 
 (function loadSvg() {
 	var ajax = new XMLHttpRequest();
@@ -138,16 +179,4 @@ var selectInventoryObject = function (object) {
 			});
 		});
 	};
-})();
-
-(function initResetButton() {
-	document.getElementById('reset-objects').addEventListener('click', function() {
-		localStorage.clear();
-
-		objects.forEach(function(object) {
-				showObject(object);
-		});
-		
-		clearInventory();
-	});
 })();
