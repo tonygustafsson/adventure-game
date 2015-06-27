@@ -5621,7 +5621,8 @@ uXiPrp6Lmd4Rv10l8Q0j6Vn/ABtKAIt6y9ojFdoMApUGeYgOanmIjSUwcxbb3hCUBxTNQo8OkdZX
 MqZKmhUCKN4VrAneHidpYly5jtO/prr6/wD/2Q==
 "
        id="background"
-	   data-action-take="true"
+	   data-title="Room"
+	   data-description="You are standing in beautiful room with a view of the beach, just a few meeters outside. You are feeling more relaxed already."
        x="-1072.1428"
        y="-67.637794" />
     <image
@@ -5799,6 +5800,8 @@ XBiKDt7YufpKpVhq8ncAVKQGYmUQ5oPJDIjYXk/1S4MBdMz2yntlL3LRcvf4GcJJohhABctEoLWw
 "
        id="coffee"
 	   data-action-take="true"
+	   data-title="Coffee cup",
+	   data-description="Hm, someone has just left a cup of coffee for you? How nice of them.."
        x="-191.57138"
        y="837.07648" />
     <image
@@ -6133,6 +6136,8 @@ tuLNSngeJDM3rgq7UxKLM6R4uLLHQmeV/wCMdYxjHh//2Q==
 "
        id="flower"
 	   data-action-take="true"
+	   data-title="Flower"
+	   data-description="A white lily are placed in the room and gives of a nice smell."
        x="444.71432"
        y="301.93365" />
     <image
@@ -6166,6 +6171,8 @@ zzhfYn75w39J2lhkOCZfUJw81D3YApZ8R9pjKPPH9i+6OMWOU2jvw6eDTwYT65//2Q==
 "
        id="sink"
 	   data-action-take="true"
+	   data-title="Sink"
+	   data-description="This green sink seems to have been cleaned recently..."
        x="228.09213"
        y="464.45935" />
   </g>

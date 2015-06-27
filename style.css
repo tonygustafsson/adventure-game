@@ -1,3 +1,7 @@
+* {
+	-webkit-user-select: none;
+}
+
 body {
 	margin: 0;
 	background: #000;
@@ -44,6 +48,7 @@ svg {
 #inventory {
 	float: left;
 	width: 20vw;
+	padding-top: 2em;
 }
 
 #inventory h2 {
@@ -74,4 +79,23 @@ svg {
 .selected {
 	outline: 2px rgba(0, 0, 0, 0.39) solid;
 	opacity: 0.8;
+}
+
+#inventory .selected {
+	outline: 1px rgb(96, 42, 165) solid;
+}
+
+button {
+	padding: .5em 1em;
+	background-color: rgb(96, 42, 165);
+	font-weight: bold;
+	color: white;
+	border: 1px white solid;
+	box-shadow: 1px 1px 4px rgb(218, 189, 255), -1px -1px 4px rgb(218, 189, 255);
+	text-transform: uppercase;
+	cursor: pointer;
+}
+
+button:hover {
+	background-color: rgb(100, 48, 169);
 }

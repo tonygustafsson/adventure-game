@@ -18,8 +18,7 @@ var game = (function () {
 		},
 		initTakeButton: function initTakeButton () {
 			actions.takeButton.addEventListener('click', function () {
-				var selectedItem = document.querySelector('.selected');
-				actions.take(selectedItem);
+				actions.take(room.selectedItem());
 			});
 		},
 		initLeaveButton: function initLeaveButton () {
@@ -37,9 +36,8 @@ var game = (function () {
 			inventory.save(item);
 			actions.deactivateAllButtons();
 		},
-		leave: function leave (inventoryItem) {
-			var itemRef = inventoryItem.getAttribute('data-item-reference'),
-				item = document.getElementById(itemRef);
+		leave: function leave (item) {
+			var inventoryItem = document.getElementById('item-reference-' + item.element.id);
 			
 			room.showItem(item);
 			inventory.remove(inventoryItem);
@@ -61,11 +59,14 @@ var game = (function () {
 		itemContainer: document.getElementById("inventory-items"),
 		items: document.getElementById("inventory-items").childNodes,
 		selectedItem: function selectedItem () {
-			return document.querySelector('#inventory-items .selected');
+			var element = document.querySelector('#inventory-items .selected');
+			return room.getItemFromElement(element);
 		},
 		select: function select (item) {
 			inventory.deselectAll();
 			item.parentNode.classList.add('selected');
+			room.deselectAllItems();
+			room.description.hide();
 			actions.deactivateAllButtons();
 			actions.activateButton(actions.leaveButton);
 		},
@@ -76,12 +77,12 @@ var game = (function () {
 		},
 		save: function save (item) {
 			var newSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg"),
-				image = item.cloneNode(true);
+				image = item.element.cloneNode(true);
 				
 			image.setAttribute('x', 0);
 			image.setAttribute('y', 0);
-			newSvg.setAttribute('data-item-reference', item.id);
-			newSvg.id = 'item-reference-' + item.id;
+			newSvg.setAttribute('data-item-reference', item.element.id);
+			newSvg.id = 'item-reference-' + item.element.id;
 			newSvg.classList.add('inventory-item');
 		
 			newSvg.addEventListener('click', function() {
@@ -97,13 +98,13 @@ var game = (function () {
 			newSvg.appendChild(image);
 			inventory.itemContainer.appendChild(newSvg);
 		},
-		remove: function remove (item) {
+		remove: function remove (itemElement) {
 			inventory.deselectAll();
-			item.classList.add('invisible');
+			itemElement.classList.add('invisible');
 			
 			setTimeout(function() {
 				//Fade out
-				inventory.itemContainer.removeChild(item);
+				inventory.itemContainer.removeChild(itemElement);
 			}, 250);
 		},
 		clear: function clear () {
@@ -125,39 +126,95 @@ var game = (function () {
 				itemList = [];
 				
 			[].forEach.call(imageItems, function(item) {
-				if (item.id !== "background") {
-					itemList.push(item);
-				}
+				var thisItem = {
+					"element": item,
+					"takable": item.getAttribute('data-action-take') === "true" ? true : false,
+					"title": item.getAttribute('data-title'),
+					"description": item.getAttribute('data-description')
+				};
+					
+				itemList.push(thisItem);
 			});
 			
 			return itemList;
 		},
+		selectedItem: function selectedItem () {
+			var element = room.container().querySelector('.selected');
+			return room.getItemFromElement(element);
+		},
+		getItemFromElement: function getItemFromElement(element) {
+			var foundElement;
+			
+			room.items.forEach(function (item) {
+				if (element.id === item.element.id || element.getAttribute('data-item-reference') === item.element.id) {
+					foundElement = item;
+				}
+			});
+			
+			return foundElement;
+		},
 		selectItem: function selectItem (item) {
-			item.classList.add('selected');
 			actions.deactivateAllButtons();
+			inventory.deselectAll();
+			
+			if (item.element.id !== "background") {
+				item.element.classList.add('selected');
+			}
 		
-			if (item.getAttribute('data-action-take') === "true") {
+			if (item.takable) {
 				actions.activateButton(actions.takeButton);
 			}
+			
+			room.description.add(item);
 		},
 		deselectItem: function deselectItem (item) {
-			item.classList.remove('selected');
+			item.element.classList.remove('selected');
 		},
 		deselectAllItems: function deselectAllItems () {
 			actions.deactivateAllButtons();
 			
 			room.items.forEach(function(item) {
-				item.classList.remove('selected');
+				item.element.classList.remove('selected');
 			});
 		},
+		description: {
+			element: function element() {
+				return document.getElementById("description");	
+			},
+			add: function add(item) {
+				room.description.reset();
+				room.description.show();
+				
+				if (item.title.length > 0) {
+					var title = document.createElement("h2");
+					title.textContent = item.title;	
+					room.description.element().appendChild(title);	
+				}
+	
+				if (item.description.length > 0) {
+					var description = document.createElement("p");
+					description.textContent = item.description;	
+					room.description.element().appendChild(description);
+				}
+			},
+			reset: function reset () {
+				room.description.element().innerHTML = "";	
+			},
+			hide: function hide () {
+				room.description.element().classList.add('invisible');	
+			},
+			show: function show () {
+				room.description.element().classList.remove('invisible');	
+			},	
+		},
 		showItem: function showItem (item) {
-			item.classList.remove('invisible');
-			localStorage.removeItem(item.id);
+			item.element.classList.remove('invisible');
+			localStorage.removeItem(item.element.id);
 		},
 		hideItem: function hideItem (item) {
 			room.deselectItem(item);
-			item.classList.add('invisible');
-			localStorage.setItem(item.id, "invisible");
+			item.element.classList.add('invisible');
+			localStorage.setItem(item.element.id, "invisible");
 		},
 		load: function load () {
 			var ajax = new XMLHttpRequest();
@@ -169,22 +226,22 @@ var game = (function () {
 				room.items = room.getItems();
 				
 				room.items.forEach(function goThroughItems (item) {
-					item.classList.add('item');
-					
-					room.background().addEventListener('click', function() {
-						room.deselectAllItems();
-					});
-					
-					if (localStorage.getItem(item.id) === "invisible") {
+					item.element.classList.add('item');
+								
+					if (localStorage.getItem(item.element.id) === "invisible") {
 						room.hideItem(item);
 						inventory.save(item);
 					}
 					
-					item.addEventListener('click', function() {
+					item.element.addEventListener('click', function() {
 						room.deselectAllItems();
 						room.selectItem(item);
 					});
 				});
+						
+				//Add title and description
+				var clickEvent = new Event('click');
+    			room.background().dispatchEvent(clickEvent);
 			};
 		}
 	};
