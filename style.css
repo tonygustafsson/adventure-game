@@ -31,8 +31,13 @@ svg {
 }
 
 .item {
-	opacity: .25s;
+	opacity: 1;
 	transition: opacity 1s;
+	cursor: pointer;
+}
+
+#background {
+	cursor: auto;
 }
 
 .invisible {
