@@ -4,6 +4,8 @@ var game = (function () {
 	var actions = {
 		takeButton: document.getElementById('action-take'),
 		leaveButton: document.getElementById('action-leave'),
+		useButton: document.getElementById('action-use'),
+		smellButton: document.getElementById('action-smell'),
 		activateButton: function activateButton (button) {
 			button.classList.add('action-button-visible');
 		},
@@ -26,6 +28,16 @@ var game = (function () {
 				actions.leave(inventory.selectedItem());
 			});
 		},
+		initUseButton: function initUseButton () {
+			actions.useButton.addEventListener('click', function () {
+				actions.use(room.selectedItem());
+			});
+		},
+		initSmellButton: function initSmellButton () {
+			actions.smellButton.addEventListener('click', function () {
+				actions.smell(room.selectedItem());
+			});
+		},
 		initResetButton: function initResetButton () {
 			document.getElementById('reset-game').addEventListener('click', function() {
 				actions.reset();
@@ -42,6 +54,12 @@ var game = (function () {
 			room.showItem(item);
 			inventory.remove(inventoryItem);
 			actions.deactivateAllButtons();
+		},
+		use: function use (item) {
+			room.message.add(item.useMessage);
+		},
+		smell: function smell (item) {
+			room.message.add(item.smellMessage);
 		},
 		reset: function reset () {
 			localStorage.clear();
@@ -152,6 +170,12 @@ var game = (function () {
 			if (item.takable) {
 				actions.activateButton(actions.takeButton);
 			}
+			if (item.usable) {
+				actions.activateButton(actions.useButton);
+			}
+			if (item.smellable) {
+				actions.activateButton(actions.smellButton);
+			}
 			
 			room.description.add(item);
 		},
@@ -171,6 +195,7 @@ var game = (function () {
 			},
 			add: function add(item) {
 				room.description.reset();
+				room.message.reset();
 				room.description.show();
 				
 				if (item.title.length > 0) {
@@ -193,7 +218,31 @@ var game = (function () {
 			},
 			show: function show () {
 				room.description.element().classList.remove('invisible');	
-			},	
+			}	
+		},
+		message: {
+			element: function element() {
+				return document.getElementById("message");	
+			},
+			add: function add(message) {
+				room.message.reset();
+				room.message.show();
+				
+				if (message.length > 0) {
+					var messageElement = document.createElement("p");
+					messageElement.textContent = message;	
+					room.message.element().appendChild(messageElement);	
+				}
+			},
+			reset: function reset () {
+				room.message.element().innerHTML = "";	
+			},
+			hide: function hide () {
+				room.message.element().classList.add('invisible');	
+			},
+			show: function show () {
+				room.message.element().classList.remove('invisible');	
+			}	
 		},
 		showItem: function showItem (item) {
 			item.element().classList.remove('invisible');
@@ -251,5 +300,7 @@ var game = (function () {
 	room.load();
 	actions.initTakeButton();
 	actions.initLeaveButton();
+	actions.initUseButton();
+	actions.initSmellButton();
 	actions.initResetButton();
 }());

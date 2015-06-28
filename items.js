@@ -23,6 +23,8 @@ var items =  {
 		title: "Flower",
 		description: "A white lily are placed in the room and gives of a nice smell.",
 		takable: true,
+		smellable: true,
+		smellMessage: "A wonderful mix of sweet and fruity.",
 		element: function () {
 			return document.getElementById(this.id);
 		}
@@ -37,6 +39,8 @@ var items =  {
 		title: "Coffee cup",
 		description: "Hm, someone has just left a cup of coffee for you? How nice of them.",
 		takable: true,
+		smellable: true,
+		smellMessage: "Oh that scent of Java in the morning!",
 		element: function () {
 			return document.getElementById(this.id);
 		}
@@ -64,6 +68,9 @@ var items =  {
 		image: "items/transparent.png",
 		title: "Television",
 		description: "The television seems to be turned of at the moment.",
+		takable: false,
+		usable: true,
+		useMessage: "I don't think you should turn on the TV right now, someone might here you?",
 		element: function () {
 			return document.getElementById(this.id);
 		}
@@ -114,8 +121,11 @@ var items =  {
 		x: -460,
 		y: 584,
 		image: "items/transparent.png",
-		title: "Sumbed",
+		title: "Sunbed",
 		description: "Oh my god, that looks comfy enough for you. How about a day just chillin'?",
+		takable: false,
+		usable: true,
+		useMessage: "I don't think they want to use their sunbed...",
 		element: function () {
 			return document.getElementById(this.id);
 		}
