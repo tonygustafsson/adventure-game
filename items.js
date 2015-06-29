@@ -1,3 +1,5 @@
+"use strict";
+
 var items =  {
 	background: {
 		id: "background",

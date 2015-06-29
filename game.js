@@ -65,8 +65,10 @@ var game = (function () {
 			localStorage.clear();
 	
 			for (var item in items) {
-				room.showItem(items[item]);
-			};
+				if (items.hasOwnProperty(item)) {
+					room.showItem(items[item]);
+				}
+			}
 			
 			inventory.clear();
 			actions.deactivateAllButtons();
@@ -154,7 +156,7 @@ var game = (function () {
 				if (element.id === items[item].element().id || element.getAttribute('data-item-reference') === items[item].element().id) {
 					foundElement = items[item];
 				}
-			};
+			}
 			
 			return foundElement;
 		},
@@ -186,8 +188,10 @@ var game = (function () {
 			actions.deactivateAllButtons();
 			
 			for (var item in items) {
-				items[item].element().classList.remove('selected');
-			};
+				if (items.hasOwnProperty(item)) {
+					items[item].element().classList.remove('selected');
+				}
+			}
 		},
 		description: {
 			element: function element() {
@@ -257,34 +261,34 @@ var game = (function () {
 			var group = document.getElementsByTagName('g')[0];
 			
 			for (var item in items) {
-				var newItem = document.createElementNS('http://www.w3.org/2000/svg','image');
-				item = items[item];
+				if (items.hasOwnProperty(item)) {
+					var newItem = document.createElementNS('http://www.w3.org/2000/svg','image');
+					item = items[item];
+						
+					newItem.id = item.id;
+					newItem.setAttribute('width', item.width);
+					newItem.setAttribute('height', item.height);
+					newItem.setAttribute('x', item.x);
+					newItem.setAttribute('y', item.y);
+					newItem.setAttributeNS('http://www.w3.org/1999/xlink','xlink:href', item.image);
+					newItem.setAttribute('data-title', item.title);
+					newItem.setAttribute('data-description', item.description);
+					newItem.setAttribute('data-takable', item.takable ? "true" : "false");
+					newItem.classList.add('item');
 					
-				newItem.id = item.id;
-				newItem.setAttribute('width', item.width);
-				newItem.setAttribute('height', item.height);
-				newItem.setAttribute('x', item.x);
-				newItem.setAttribute('y', item.y);
-				newItem.setAttributeNS('http://www.w3.org/1999/xlink','xlink:href', item.image);
-				newItem.setAttribute('data-title', item.title);
-				newItem.setAttribute('data-description', item.description);
-				newItem.setAttribute('data-takable', item.takable ? "true" : "false")
-				newItem.classList.add('item');
+					(function(item) {
+						newItem.addEventListener('click', function () {
+							room.selectItem(item);
+						});
+					})(item);
 				
-				(function(item) {
-					newItem.addEventListener('click', function () {
-						room.selectItem(item);
-					});
-				})(item);
-
-				newItem.classList.add('item');
-				
-				if (localStorage.getItem(item.id) === "invisible") {
-					newItem.classList.add('invisible');
-					inventory.save(item);
+					if (localStorage.getItem(item.id) === "invisible") {
+						newItem.classList.add('invisible');
+						inventory.save(item);
+					}
+	
+					group.appendChild(newItem);
 				}
-
-				group.appendChild(newItem);
 			}
 		},
 		load: function load () {
