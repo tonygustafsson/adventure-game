@@ -18,9 +18,8 @@ h1 {
 
 #game {
 	float: left;
-	width: 77vw;
-	height: 85vh;
-	padding: 0 1vw;
+	width: 75%;
+	padding: 0 1%;
 }
 
 svg {
@@ -38,8 +37,14 @@ svg {
 	cursor: auto;
 }
 
+#panel {
+	float: left;
+	width: 18%;
+	padding: 0 1%;
+}
+
 #description {
-	padding-top: 4vw;
+	padding-top: 2em;
 }
 
 .invisible {
@@ -55,7 +60,6 @@ svg {
 
 #inventory {
 	float: left;
-	width: 19vw;
 	padding-top: 2em;
 }
 
@@ -64,7 +68,7 @@ svg {
 }
 
 .inventory-item {
-	max-width: 40%;
+	max-width: 100%;
 	max-height: 100px;
 	padding: 5%;
 	-webkit-filter: sepia(50%);
