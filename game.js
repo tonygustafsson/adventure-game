@@ -82,11 +82,18 @@ var game = (function () {
 			var element = document.querySelector('#inventory-items .selected');
 			return room.getItemFromElement(element);
 		},
+		getItemElement: function getItemInventoryElement (item) {
+			var elementId = "item-reference-" + item.id;
+			return document.getElementById(elementId);	
+		},
 		select: function select (item) {
+			var inventoryElement = inventory.getItemElement(item);
 			inventory.deselectAll();
-			item.parentNode.classList.add('selected');
+			inventoryElement.classList.add('selected');
+			
 			room.deselectAllItems();
 			room.description.hide();
+			
 			actions.deactivateAllButtons();
 			actions.activateButton(actions.leaveButton);
 		},
@@ -96,32 +103,26 @@ var game = (function () {
 			});
 		},
 		save: function save (item) {
-			var inventorySvg = document.createElementNS("http://www.w3.org/2000/svg", "svg"),
-				image = document.createElementNS("http://www.w3.org/2000/svg", "image");
-				
-			image.setAttribute('width', "200");
-			image.setAttribute('height', "200");
-			image.setAttribute('x', "0");
-			image.setAttribute('y', "0");
-			image.setAttributeNS('http://www.w3.org/1999/xlink','xlink:href', item.image);
-			image.classList.add('invisible');
-
-			inventorySvg.setAttribute('data-item-reference', item.id);
-			inventorySvg.id = 'item-reference-' + item.id;
-			inventorySvg.classList.add('inventory-item');
+			var newImage = document.createElement('img');
+			newImage.id = 'item-reference-' + item.id;
+			newImage.setAttribute('width', "200");
+			newImage.setAttribute('height', "200");
+			newImage.setAttribute('src', item.image);
+			newImage.classList.add('inventory-item');
+			newImage.classList.add('invisible');
+			newImage.setAttribute('data-item-reference', item.id);
 		
-			inventorySvg.addEventListener('click', function() {
+			newImage.addEventListener('click', function() {
 				//Show take button
-				inventory.select(image);
+				inventory.select(item);
 			});
 		
 			setTimeout(function() {
 				//Fade in
-				image.classList.remove('invisible');
+				newImage.classList.remove('invisible');
 			}, 250);
 			
-			inventorySvg.appendChild(image);
-			inventory.itemContainer.appendChild(inventorySvg);
+			inventory.itemContainer.appendChild(newImage);
 		},
 		remove: function remove (itemElement) {
 			inventory.deselectAll();
@@ -148,6 +149,10 @@ var game = (function () {
 		selectedItem: function selectedItem () {
 			var element = room.container().querySelector('.selected');
 			return room.getItemFromElement(element);
+		},
+		getItemElement: function getItemElement (item) {
+			var elementId = item.id;
+			return document.getElementById(elementId);	
 		},
 		getItemFromElement: function getItemFromElement(element) {
 			var foundElement;

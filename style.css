@@ -71,6 +71,7 @@ svg {
 	-moz-filter: sepia(50%);
 	filter: sepia(50%);
 	transition: opacity .25s;
+	cursor: pointer;
 }
 
 .inventory-item image {
