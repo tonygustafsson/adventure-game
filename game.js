@@ -143,7 +143,7 @@ var game = (function () {
 			return document.getElementById("background");
 		},
 		container: function  container () {
-			return document.getElementById("svg-container");
+			return document.getElementById("game");
 		},
 		image: "svg/room.svg",
 		selectedItem: function selectedItem () {

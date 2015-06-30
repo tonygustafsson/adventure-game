@@ -13,14 +13,10 @@ body {
 }
 
 h1 {
-	margin: .5em 2em;
+	margin: .5em;
 }
 
 #game {
-	float: left;
-}
-
-#svg-container {
 	float: left;
 	width: 77vw;
 	height: 85vh;
@@ -42,6 +38,10 @@ svg {
 	cursor: auto;
 }
 
+#description {
+	padding-top: 4vw;
+}
+
 .invisible {
 	opacity: 0;
 	pointer-events: none;
@@ -55,7 +55,7 @@ svg {
 
 #inventory {
 	float: left;
-	width: 20vw;
+	width: 19vw;
 	padding-top: 2em;
 }
 
