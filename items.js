@@ -8,7 +8,7 @@ var items =  {
 		x: 0,
 		y: 0,
 		image: "items/background.jpg",
-		title: "Room",
+		title: "Beach House",
 		description: "You are standing in beautiful room with a view of the beach, just a few meeters outside. You are feeling more relaxed already.",
 		takable: false,
 		element: function () {

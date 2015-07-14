@@ -2,64 +2,83 @@ var game = (function () {
 	"use strict";
 	
 	var actions = {
-		takeButton: document.getElementById('action-take'),
-		leaveButton: document.getElementById('action-leave'),
-		useButton: document.getElementById('action-use'),
-		smellButton: document.getElementById('action-smell'),
-		activateButton: function activateButton (button) {
-			button.classList.add('action-button-visible');
-		},
-		deactivateButton: function deactivateButton (button) {
-			button.classList.remove('action-button-visible');	
-		},
-		deactivateAllButtons: function deactivateAllButtons () {
-			var buttons = document.querySelectorAll('.action-button');	
-			[].forEach.call(buttons, function (button) {
-				button.classList.remove('action-button-visible');
-			});
-		},
-		initTakeButton: function initTakeButton () {
-			actions.takeButton.addEventListener('click', function () {
-				actions.take(room.selectedItem());
-			});
-		},
-		initLeaveButton: function initLeaveButton () {
-			actions.leaveButton.addEventListener('click', function () {
-				actions.leave(inventory.selectedItem());
-			});
-		},
-		initUseButton: function initUseButton () {
-			actions.useButton.addEventListener('click', function () {
-				actions.use(room.selectedItem());
-			});
-		},
-		initSmellButton: function initSmellButton () {
-			actions.smellButton.addEventListener('click', function () {
-				actions.smell(room.selectedItem());
-			});
-		},
-		initResetButton: function initResetButton () {
-			document.getElementById('reset-game').addEventListener('click', function() {
-				actions.reset();
-			});
+		buttons: {
+			take: function take () {
+				return document.getElementById('action-take');
+			},
+			use: function use () {
+				return document.getElementById('action-use');
+			},
+			smell: function smell () {
+				return document.getElementById('action-smell');
+			},
+			cancel: function cancel () {
+				return document.getElementById('action-cancel');
+			},
+			leave: function leave () {
+				return document.getElementById('action-leave');
+			},
+			reset: function reset () {
+				return document.getElementById('action-reset');
+			},
+			activate: function activate (button) {
+				button.classList.add('action-button-visible');
+			},
+			deactivate: function deactivate (button) {
+				button.classList.remove('action-button-visible');	
+			},
+			deactivateAll: function deactivateAll () {
+				var buttons = document.querySelectorAll('.action-button');
+				
+				[].forEach.call(buttons, function (button) {
+					if (!button.classList.contains('persistant-button')) {
+						button.classList.remove('action-button-visible');
+					}
+				});
+			},
+			initialize: function initialize () {
+				actions.buttons.take().addEventListener('click', function () {
+					actions.take(room.selectedItem());
+				});
+				actions.buttons.leave().addEventListener('click', function () {
+					actions.leave(inventory.selectedItem());
+				});
+				actions.buttons.use().addEventListener('click', function () {
+					actions.use(room.selectedItem());
+				});
+				actions.buttons.smell().addEventListener('click', function () {
+					actions.smell(room.selectedItem());
+				});
+				actions.buttons.cancel().addEventListener('click', function () {
+					actions.cancel();
+				});
+				actions.buttons.reset().addEventListener('click', function () {
+					actions.reset();
+				});
+			}
 		},
 		take: function take (item) {
 			room.hideItem(item);
 			inventory.save(item);
-			actions.deactivateAllButtons();
+			actions.buttons.deactivateAll();
 		},
 		leave: function leave (item) {
 			var inventoryItem = document.getElementById('item-reference-' + item.element().id);
 			
 			room.showItem(item);
 			inventory.remove(inventoryItem);
-			actions.deactivateAllButtons();
+			actions.buttons.deactivateAll();
 		},
 		use: function use (item) {
 			room.message.add(item.useMessage);
 		},
 		smell: function smell (item) {
 			room.message.add(item.smellMessage);
+		},
+		cancel: function cancel () {
+			panels.action.hide();
+			room.deselectAllItems();
+			inventory.deselectAll();
 		},
 		reset: function reset () {
 			localStorage.clear();
@@ -71,7 +90,11 @@ var game = (function () {
 			}
 			
 			inventory.clear();
-			actions.deactivateAllButtons();
+			actions.buttons.deactivateAll();
+			panels.action.hide();
+			panels.inventory.hide();
+			panels.map.hide();
+			panels.settings.hide();
 		}
 	};
 	
@@ -94,8 +117,10 @@ var game = (function () {
 			room.deselectAllItems();
 			room.description.hide();
 			
-			actions.deactivateAllButtons();
-			actions.activateButton(actions.leaveButton);
+			panels.action.show();
+			
+			actions.buttons.deactivateAll();
+			actions.buttons.activate(actions.buttons.leave());
 		},
 		deselectAll: function deselectAll () {
 			[].forEach.call(inventory.items, function (item) {
@@ -116,6 +141,8 @@ var game = (function () {
 				//Show take button
 				inventory.select(item);
 			});
+			
+			panels.action.hide();
 		
 			setTimeout(function() {
 				//Fade in
@@ -128,6 +155,8 @@ var game = (function () {
 			inventory.deselectAll();
 			itemElement.classList.add('invisible');
 			
+			actions.cancel();
+			
 			setTimeout(function() {
 				//Fade out
 				inventory.itemContainer.removeChild(itemElement);
@@ -138,11 +167,119 @@ var game = (function () {
 		}
 	};
 	
+	var panels = {
+		action: {
+			panelElement: function panelElement () {
+				return document.getElementById("action-panel");
+			},
+			show: function show () {
+				panels.action.panelElement().classList.add("visible");	
+			},
+			hide: function hide () {
+				panels.action.panelElement().classList.remove("visible");	
+			},
+			toggle: function toggle () {
+				if (panels.action.panelElement().classList.contains("visible")) {
+					panels.action.hide();
+				}
+				else {
+					panels.action.show();
+				}
+			},
+			initPanel: (function initPanel () {
+				document.getElementById('expand-action-panel').addEventListener('click', function (e) {
+					e.preventDefault();
+					panels.action.toggle();
+				});
+			}())
+		},
+		settings: {
+			panelElement: function panelElement () {
+				return document.getElementById("settings-panel");
+			},
+			show: function show () {
+				panels.settings.panelElement().classList.add("visible");	
+			},
+			hide: function hide () {
+				panels.settings.panelElement().classList.remove("visible");	
+			},
+			toggle: function toggle () {
+				if (panels.settings.panelElement().classList.contains("visible")) {
+					panels.settings.hide();
+				}
+				else {
+					panels.settings.show();
+				}
+			},
+			initPanel: (function initPanel () {
+				document.getElementById('expand-settings-panel').addEventListener('click', function (e) {
+					e.preventDefault();
+					panels.action.hide();
+					panels.settings.toggle();
+				});
+			}())
+		},
+		map: {
+			panelElement: function panelElement () {
+				return document.getElementById("map-panel");
+			},
+			show: function show () {
+				panels.map.panelElement().classList.add("visible");	
+			},
+			hide: function hide () {
+				panels.map.panelElement().classList.remove("visible");	
+			},
+			toggle: function toggle () {
+				if (panels.map.panelElement().classList.contains("visible")) {
+					panels.map.hide();
+				}
+				else {
+					panels.map.show();
+				}
+			},
+			initPanel: (function initPanel () {
+				document.getElementById('expand-map-panel').addEventListener('click', function (e) {
+					e.preventDefault();
+					
+					panels.inventory.hide();
+					panels.map.toggle();
+				});
+			}())
+		},
+		inventory: {
+			panelElement: function panelElement () {
+				return document.getElementById("inventory-panel");
+			},
+			show: function show () {
+				panels.inventory.panelElement().classList.add("visible");	
+			},
+			hide: function hide () {
+				panels.inventory.panelElement().classList.remove("visible");	
+			},
+			toggle: function toggle () {
+				if (panels.inventory.panelElement().classList.contains("visible")) {
+					panels.inventory.hide();
+				}
+				else {
+					panels.inventory.show();
+				}
+			},
+			initPanel: (function initPanel () {
+				document.getElementById('expand-inventory-panel').addEventListener('click', function (e) {
+					e.preventDefault();
+					
+					panels.map.hide();
+					panels.inventory.toggle();
+				});
+			}())
+		}
+	};
+	
 	var room = {
 		background: function background () {
 			return document.getElementById("background");
 		},
-		container: function  container () {
+		container: function container () {
 			return document.getElementById("game");
 		},
 		image: "svg/room.svg",
@@ -167,21 +304,22 @@ var game = (function () {
 		},
 		selectItem: function selectItem (item) {
 			room.deselectAllItems();
-			actions.deactivateAllButtons();
+			actions.buttons.deactivateAll();
 			inventory.deselectAll();
 			
 			if (item.element().id !== "background") {
 				item.element().classList.add('selected');
+				panels.action.show();
 			}
 		
 			if (item.takable) {
-				actions.activateButton(actions.takeButton);
+				actions.buttons.activate(actions.buttons.take());
 			}
 			if (item.usable) {
-				actions.activateButton(actions.useButton);
+				actions.buttons.activate(actions.buttons.use());
 			}
 			if (item.smellable) {
-				actions.activateButton(actions.smellButton);
+				actions.buttons.activate(actions.buttons.smell());
 			}
 			
 			room.description.add(item);
@@ -190,7 +328,7 @@ var game = (function () {
 			item.element().classList.remove('selected');
 		},
 		deselectAllItems: function deselectAllItems () {
-			actions.deactivateAllButtons();
+			actions.buttons.deactivateAll();
 			
 			for (var item in items) {
 				if (items.hasOwnProperty(item)) {
@@ -280,6 +418,7 @@ var game = (function () {
 					newItem.setAttribute('data-description', item.description);
 					newItem.setAttribute('data-takable', item.takable ? "true" : "false");
 					newItem.classList.add('item');
+					newItem.classList.add('item-' + item.id);
 					
 					(function(item) {
 						newItem.addEventListener('click', function () {
@@ -298,6 +437,7 @@ var game = (function () {
 		},
 		load: function load () {
 			room.createItems();
+			actions.buttons.initialize();
 					
 			//Add title and description
 			var clickEvent = new Event('click');
@@ -307,9 +447,4 @@ var game = (function () {
 	
 	//Make some stuff happen
 	room.load();
-	actions.initTakeButton();
-	actions.initLeaveButton();
-	actions.initUseButton();
-	actions.initSmellButton();
-	actions.initResetButton();
 }());
