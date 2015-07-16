@@ -12,8 +12,8 @@ var game = (function () {
 			smell: function smell () {
 				return document.getElementById('action-smell');
 			},
-			cancel: function cancel () {
-				return document.getElementById('action-cancel');
+			cancels: function cancels () {
+				return document.querySelectorAll('.action-cancel-button');
 			},
 			leave: function leave () {
 				return document.getElementById('action-leave');
@@ -49,12 +49,15 @@ var game = (function () {
 				actions.buttons.smell().addEventListener('click', function () {
 					actions.smell(room.selectedItem());
 				});
-				actions.buttons.cancel().addEventListener('click', function () {
-					actions.cancel();
-				});
 				actions.buttons.reset().addEventListener('click', function () {
 					actions.reset();
 				});
+				
+				for (var i = 0; i < actions.buttons.cancels().length; i++) {
+					actions.buttons.cancels()[i].addEventListener('click', function () {
+						actions.cancel();
+					});
+				}
 			}
 		},
 		take: function take (item) {
@@ -77,6 +80,7 @@ var game = (function () {
 		},
 		cancel: function cancel () {
 			panels.action.hide();
+			panels.settings.hide();
 			room.deselectAllItems();
 			inventory.deselectAll();
 		},
