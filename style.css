@@ -31,7 +31,7 @@ svg {
 
 .action-panel {
 	transition: top .3s cubic-bezier(0.65, 0, 0.75, 0);
-	position: absolute;
+	position: fixed;
 	left: 0;
 	top: -94%;
 	display: block;

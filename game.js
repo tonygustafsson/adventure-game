@@ -79,8 +79,7 @@ var game = (function () {
 			room.message.add(item.smellMessage);
 		},
 		cancel: function cancel () {
-			panels.action.hide();
-			panels.settings.hide();
+			panels.hideAll();
 			room.deselectAllItems();
 			inventory.deselectAll();
 		},
@@ -95,10 +94,7 @@ var game = (function () {
 			
 			inventory.clear();
 			actions.buttons.deactivateAll();
-			panels.action.hide();
-			panels.inventory.hide();
-			panels.map.hide();
-			panels.settings.hide();
+			panels.hideAll();
 		}
 	};
 	
@@ -175,6 +171,12 @@ var game = (function () {
 	};
 	
 	var panels = {
+		hideAll: function hideAll () {
+			panels.action.hide();
+			panels.inventory.hide();
+			panels.map.hide();
+			panels.settings.hide();
+		},
 		action: {
 			panelElement: function panelElement () {
 				return document.getElementById("action-panel");
@@ -317,6 +319,9 @@ var game = (function () {
 			if (item.element().id !== "background") {
 				item.element().classList.add('selected');
 				panels.action.show();
+			}
+			else {
+				panels.hideAll();
 			}
 		
 			if (item.takable) {
