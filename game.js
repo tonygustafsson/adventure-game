@@ -114,12 +114,15 @@ var game = (function () {
 			return document.getElementById(elementId);	
 		},
 		select: function select (item) {
-			var inventoryElement = inventory.getItemElement(item);
+			var inventoryElement = inventory.getItemElement(item),
+				item = document.getElementById(inventoryElement.getAttribute('data-item-reference')),
+				itemInfo = room.getItemFromElement(item);
+			
 			inventory.deselectAll();
 			inventoryElement.classList.add('selected');
 			
 			room.deselectAllItems();
-			room.description.hide();
+			room.description.add(itemInfo);
 			
 			panels.action.show();
 			
