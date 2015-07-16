@@ -50,6 +50,8 @@ svg {
 
 .expand-action-panel {
 	position: absolute;
+	display: block;
+	width: 100%;
 	bottom: 10px;
 	left: 3em;
 	color: #fff;
@@ -74,11 +76,12 @@ svg {
 
 .expand-map-panel {
 	position: absolute;
+	display: block;
 	right: 1%;
 	top: 0;
 	height: 100%;
 	width: 1em;
-	margin-top: 35vh;
+	padding-top: 35vh;
 	color: #fff;
 	text-decoration: none;
 	word-break: break-all;
@@ -98,6 +101,7 @@ svg {
 	height: 100%;
 	z-index: 2;
 	padding: 1%;
+	padding-top: 2em;
 	box-sizing: border-box;
 }
 
@@ -131,11 +135,12 @@ svg {
 
 .expand-inventory-panel {
 	position: absolute;
+	display: block;
 	left: 1%;
 	top: 0;
 	height: 100%;
 	width: 1em;
-	margin-top: 25vh;
+	padding-top: 25vh;
 	color: #fff;
 	text-decoration: none;
 	word-break: break-all;
@@ -252,7 +257,6 @@ button:hover {
 	
 	.settings-panel {
 		left: 20%;
-		top: -56%;
 		background: rgba(0,0,0,.7);
 		width: 60%;
 		height: 60%;
@@ -261,5 +265,12 @@ button:hover {
 	
 	.settings-panel.visible {
 		top: 10%;
+	}
+}
+
+/* Fugly fix for smaller devices */
+@media screen and (max-height: 400px) {
+	.action-panel, .settings-panel {
+		top: -89%;
 	}
 }
