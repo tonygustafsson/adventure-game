@@ -135,7 +135,7 @@ var game = (function () {
 			newImage.id = 'item-reference-' + item.id;
 			newImage.setAttribute('width', "200");
 			newImage.setAttribute('height', "200");
-			newImage.setAttribute('src', item.image);
+			newImage.setAttribute('src', room.getItemImage(item.image));
 			newImage.classList.add('inventory-item');
 			newImage.classList.add('invisible');
 			newImage.setAttribute('data-item-reference', item.id);
@@ -300,7 +300,7 @@ var game = (function () {
 			var elementId = item.id;
 			return document.getElementById(elementId);	
 		},
-		getItemFromElement: function getItemFromElement(element) {
+		getItemFromElement: function getItemFromElement (element) {
 			var foundElement;
 			
 			for (var item in items) {
@@ -310,6 +310,16 @@ var game = (function () {
 			}
 			
 			return foundElement;
+		},
+		getItemImage: function getItemImage (image) {
+			var itemImagesRoot = document.getElementById('game').getAttribute('data-item-images-root');
+			
+			if (typeof image !== 'undefined') {
+				return itemImagesRoot + '/' + image;
+			}
+			else {
+				return itemImagesRoot + '/../transparent.png';
+			}
 		},
 		selectItem: function selectItem (item) {
 			room.deselectAllItems();
@@ -417,7 +427,9 @@ var game = (function () {
 			
 			for (var item in items) {
 				if (items.hasOwnProperty(item)) {
-					var newItem = document.createElementNS('http://www.w3.org/2000/svg','image');
+					var newItem = document.createElementNS('http://www.w3.org/2000/svg','image'),
+						itemImagesRoot = document.getElementById('game').getAttribute('data-item-images-root');
+					
 					item = items[item];
 						
 					newItem.id = item.id;
@@ -425,7 +437,7 @@ var game = (function () {
 					newItem.setAttribute('height', item.height);
 					newItem.setAttribute('x', item.x);
 					newItem.setAttribute('y', item.y);
-					newItem.setAttributeNS('http://www.w3.org/1999/xlink','xlink:href', item.image);
+					newItem.setAttributeNS('http://www.w3.org/1999/xlink','xlink:href', room.getItemImage(item.image));
 					newItem.setAttribute('data-title', item.title);
 					newItem.setAttribute('data-description', item.description);
 					newItem.setAttribute('data-takable', item.takable ? "true" : "false");
