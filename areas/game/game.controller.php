@@ -12,7 +12,13 @@
 			$view_data['page_description'] = "An experiment.";
 			$view_data['page_keywords'] = "game, adventure";
 			$view_data['css'] = $this->opus->load->css(array('game'));
-			$view_data['js'] = $this->opus->load->js(array('items', 'game'));
+			$view_data['js'] = $this->opus->load->js(array('game'));
+			
+			$room_json_file = "assets/json/rooms/beach-house.json";
+			$room_json_file_handle = fopen($room_json_file, "r") or die("Unable to open file!");
+			$view_data['room_json'] = fread($room_json_file_handle, filesize($room_json_file));
+			fclose($room_json_file_handle);
+
 			$view_data['partial'] = $this->opus->load->view('game', null, TRUE);
 			
 			$this->opus->load->view('game-template', $view_data);

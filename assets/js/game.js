@@ -66,7 +66,7 @@ var game = (function () {
 			actions.buttons.deactivateAll();
 		},
 		leave: function leave (item) {
-			var inventoryItem = document.getElementById('item-reference-' + item.element().id);
+			var inventoryItem = document.getElementById('item-reference-' + item.id);
 			
 			room.showItem(item);
 			inventory.remove(inventoryItem);
@@ -304,7 +304,7 @@ var game = (function () {
 			var foundElement;
 			
 			for (var item in items) {
-				if (element.id === items[item].element().id || element.getAttribute('data-item-reference') === items[item].element().id) {
+				if (element.id === items[item].id || element.getAttribute('data-item-reference') === items[item].id) {
 					foundElement = items[item];
 				}
 			}
@@ -326,8 +326,8 @@ var game = (function () {
 			actions.buttons.deactivateAll();
 			inventory.deselectAll();
 			
-			if (item.element().id !== "background") {
-				item.element().classList.add('selected');
+			if (item.id !== "background") {
+				document.getElementById(item.id).classList.add('selected');
 				panels.action.show();
 			}
 			else {
@@ -347,14 +347,14 @@ var game = (function () {
 			room.description.add(item);
 		},
 		deselectItem: function deselectItem (item) {
-			item.element().classList.remove('selected');
+			document.getElementById(item.id).classList.remove('selected');
 		},
 		deselectAllItems: function deselectAllItems () {
 			actions.buttons.deactivateAll();
 			
 			for (var item in items) {
 				if (items.hasOwnProperty(item)) {
-					items[item].element().classList.remove('selected');
+					document.getElementById(items[item].id).classList.remove('selected');
 				}
 			}
 		},
@@ -414,21 +414,20 @@ var game = (function () {
 			}	
 		},
 		showItem: function showItem (item) {
-			item.element().classList.remove('invisible');
-			localStorage.removeItem(item.element().id);
+			document.getElementById(item.id).classList.remove('invisible');
+			localStorage.removeItem(item.id);
 		},
 		hideItem: function hideItem (item) {
 			room.deselectItem(item);
-			item.element().classList.add('invisible');
-			localStorage.setItem(item.element().id, "invisible");
+			document.getElementById(item.id).classList.add('invisible');
+			localStorage.setItem(item.id, "invisible");
 		},
 		createItems: function createItems () {
 			var group = document.getElementsByTagName('g')[0];
 			
 			for (var item in items) {
 				if (items.hasOwnProperty(item)) {
-					var newItem = document.createElementNS('http://www.w3.org/2000/svg','image'),
-						itemImagesRoot = document.getElementById('game').getAttribute('data-item-images-root');
+					var newItem = document.createElementNS('http://www.w3.org/2000/svg','image');
 					
 					item = items[item];
 						

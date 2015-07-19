@@ -16,7 +16,7 @@
 	</a>
 </aside>
 
-<div id="game" class="game" data-item-images-root="<?=$this->opus->url('assets/images/items/beach-house')?>">	
+<div id="game" class="game" data-item-images-root="<?=$this->opus->url('assets/images/items/beach-house')?>" data-room-json="<?=$this->opus->url('assets/json/rooms/beach-house.json')?>">	
 	<svg
 	   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 	   xmlns:svg="http://www.w3.org/2000/svg"
