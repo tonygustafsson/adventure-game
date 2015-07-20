@@ -33,7 +33,7 @@
 		
 		<?php if (isset($room_json)): ?>
 			<script type="text/javascript">
-				var items = <?=$room_json?>
+				var roomJSON = <?=$room_json?>
 			</script>
 		<?php endif; ?>
 		

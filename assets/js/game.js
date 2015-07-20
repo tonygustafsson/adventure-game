@@ -86,9 +86,9 @@ var game = (function () {
 		reset: function reset () {
 			localStorage.clear();
 	
-			for (var item in items) {
-				if (items.hasOwnProperty(item)) {
-					room.showItem(items[item]);
+			for (var item in roomJSON.items) {
+				if (roomJSON.items.hasOwnProperty(item)) {
+					room.showItem(roomJSON.items[item]);
 				}
 			}
 			
@@ -119,6 +119,7 @@ var game = (function () {
 			
 			room.deselectAllItems();
 			room.description.add(itemInfo);
+			room.description.show();
 			
 			panels.action.show();
 			
@@ -285,8 +286,8 @@ var game = (function () {
 	};
 	
 	var room = {
-		background: function background () {
-			return document.getElementById("background");
+		get: function get () {
+			return document.getElementById("room");
 		},
 		container: function container () {
 			return document.getElementById("game");
@@ -303,9 +304,9 @@ var game = (function () {
 		getItemFromElement: function getItemFromElement (element) {
 			var foundElement;
 			
-			for (var item in items) {
-				if (element.id === items[item].id || element.getAttribute('data-item-reference') === items[item].id) {
-					foundElement = items[item];
+			for (var item in roomJSON.items) {
+				if (element.id === roomJSON.items[item].id || element.getAttribute('data-item-reference') === roomJSON.items[item].id) {
+					foundElement = roomJSON.items[item];
 				}
 			}
 			
@@ -325,15 +326,8 @@ var game = (function () {
 			room.deselectAllItems();
 			actions.buttons.deactivateAll();
 			inventory.deselectAll();
+			room.getItemElement(item).classList.add('selected');
 			
-			if (item.id !== "background") {
-				document.getElementById(item.id).classList.add('selected');
-				panels.action.show();
-			}
-			else {
-				panels.hideAll();
-			}
-		
 			if (item.takable) {
 				actions.buttons.activate(actions.buttons.take());
 			}
@@ -345,6 +339,7 @@ var game = (function () {
 			}
 			
 			room.description.add(item);
+			room.description.show();
 		},
 		deselectItem: function deselectItem (item) {
 			document.getElementById(item.id).classList.remove('selected');
@@ -352,9 +347,9 @@ var game = (function () {
 		deselectAllItems: function deselectAllItems () {
 			actions.buttons.deactivateAll();
 			
-			for (var item in items) {
-				if (items.hasOwnProperty(item)) {
-					document.getElementById(items[item].id).classList.remove('selected');
+			for (var item in roomJSON.items) {
+				if (roomJSON.items.hasOwnProperty(item)) {
+					document.getElementById(roomJSON.items[item].id).classList.remove('selected');
 				}
 			}
 		},
@@ -365,7 +360,6 @@ var game = (function () {
 			add: function add(item) {
 				room.description.reset();
 				room.message.reset();
-				room.description.show();
 				
 				if (item.title.length > 0) {
 					var title = document.createElement("h2");
@@ -386,7 +380,8 @@ var game = (function () {
 				room.description.element().classList.add('invisible');	
 			},
 			show: function show () {
-				room.description.element().classList.remove('invisible');	
+				panels.action.show();
+				room.description.element().classList.remove('invisible');
 			}	
 		},
 		message: {
@@ -422,14 +417,45 @@ var game = (function () {
 			document.getElementById(item.id).classList.add('invisible');
 			localStorage.setItem(item.id, "invisible");
 		},
+		createSvgImage: function createSvgImage (item) {
+			
+		},
+		createRoom: function createRoom () {
+			var group = document.getElementsByTagName('g')[0],
+				background = document.createElementNS('http://www.w3.org/2000/svg','image');
+			
+			background.id = 'room-background';
+			background.setAttribute('width', roomJSON.room.width);
+			background.setAttribute('height', roomJSON.room.height);
+			background.setAttribute('x', roomJSON.room.x);
+			background.setAttribute('y', roomJSON.room.y);
+			background.setAttributeNS('http://www.w3.org/1999/xlink','xlink:href', room.getItemImage(roomJSON.room.image));
+			background.setAttribute('data-title', roomJSON.room.title);
+			background.setAttribute('data-description', roomJSON.room.description);
+			background.classList.add('room-background');
+			
+			room.description.add(roomJSON.room);
+			
+			(function() {
+				background.addEventListener('click', function () {
+					panels.hideAll();
+					inventory.deselectAll();
+					room.deselectAllItems();
+					
+					room.description.add(roomJSON.room);
+				});
+			})();
+			
+			group.appendChild(background);
+		},
 		createItems: function createItems () {
 			var group = document.getElementsByTagName('g')[0];
 			
-			for (var item in items) {
-				if (items.hasOwnProperty(item)) {
+			for (var item in roomJSON.items) {
+				if (roomJSON.items.hasOwnProperty(item)) {
 					var newItem = document.createElementNS('http://www.w3.org/2000/svg','image');
 					
-					item = items[item];
+					item = roomJSON.items[item];
 						
 					newItem.id = item.id;
 					newItem.setAttribute('width', item.width);
@@ -459,12 +485,9 @@ var game = (function () {
 			}
 		},
 		load: function load () {
+			room.createRoom();
 			room.createItems();
 			actions.buttons.initialize();
-					
-			//Add title and description
-			var clickEvent = new Event('click');
-			room.background().dispatchEvent(clickEvent);
 		}
 	};	
 	
