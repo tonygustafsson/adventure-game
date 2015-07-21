@@ -86,9 +86,9 @@ var game = (function () {
 		reset: function reset () {
 			localStorage.clear();
 	
-			for (var item in roomJSON.items) {
-				if (roomJSON.items.hasOwnProperty(item)) {
-					room.showItem(roomJSON.items[item]);
+			for (var item in roomData.items) {
+				if (roomData.items.hasOwnProperty(item)) {
+					room.showItem(roomData.items[item]);
 				}
 			}
 			
@@ -304,9 +304,9 @@ var game = (function () {
 		getItemFromElement: function getItemFromElement (element) {
 			var foundElement;
 			
-			for (var item in roomJSON.items) {
-				if (element.id === roomJSON.items[item].id || element.getAttribute('data-item-reference') === roomJSON.items[item].id) {
-					foundElement = roomJSON.items[item];
+			for (var item in roomData.items) {
+				if (element.id === roomData.items[item].id || element.getAttribute('data-item-reference') === roomData.items[item].id) {
+					foundElement = roomData.items[item];
 				}
 			}
 			
@@ -315,7 +315,7 @@ var game = (function () {
 		getItemImage: function getItemImage (image) {
 			var itemImagesRoot = document.getElementById('game').getAttribute('data-item-images-root');
 			
-			if (typeof image !== 'undefined') {
+			if (typeof image !== 'undefined' && image !== "") {
 				return itemImagesRoot + '/' + image;
 			}
 			else {
@@ -347,9 +347,9 @@ var game = (function () {
 		deselectAllItems: function deselectAllItems () {
 			actions.buttons.deactivateAll();
 			
-			for (var item in roomJSON.items) {
-				if (roomJSON.items.hasOwnProperty(item)) {
-					document.getElementById(roomJSON.items[item].id).classList.remove('selected');
+			for (var item in roomData.items) {
+				if (roomData.items.hasOwnProperty(item)) {
+					document.getElementById(roomData.items[item].id).classList.remove('selected');
 				}
 			}
 		},
@@ -425,16 +425,16 @@ var game = (function () {
 				background = document.createElementNS('http://www.w3.org/2000/svg','image');
 			
 			background.id = 'room-background';
-			background.setAttribute('width', roomJSON.room.width);
-			background.setAttribute('height', roomJSON.room.height);
-			background.setAttribute('x', roomJSON.room.x);
-			background.setAttribute('y', roomJSON.room.y);
-			background.setAttributeNS('http://www.w3.org/1999/xlink','xlink:href', room.getItemImage(roomJSON.room.image));
-			background.setAttribute('data-title', roomJSON.room.title);
-			background.setAttribute('data-description', roomJSON.room.description);
+			background.setAttribute('width', roomData.width);
+			background.setAttribute('height', roomData.height);
+			background.setAttribute('x', roomData.x);
+			background.setAttribute('y', roomData.y);
+			background.setAttributeNS('http://www.w3.org/1999/xlink','xlink:href', room.getItemImage(roomData.image));
+			background.setAttribute('data-title', roomData.title);
+			background.setAttribute('data-description', roomData.description);
 			background.classList.add('room-background');
 			
-			room.description.add(roomJSON.room);
+			room.description.add(roomData);
 			
 			(function() {
 				background.addEventListener('click', function () {
@@ -442,7 +442,7 @@ var game = (function () {
 					inventory.deselectAll();
 					room.deselectAllItems();
 					
-					room.description.add(roomJSON.room);
+					room.description.add(roomData);
 				});
 			})();
 			
@@ -451,11 +451,11 @@ var game = (function () {
 		createItems: function createItems () {
 			var group = document.getElementsByTagName('g')[0];
 			
-			for (var item in roomJSON.items) {
-				if (roomJSON.items.hasOwnProperty(item)) {
+			for (var item in roomData.items) {
+				if (roomData.items.hasOwnProperty(item)) {
 					var newItem = document.createElementNS('http://www.w3.org/2000/svg','image');
 					
-					item = roomJSON.items[item];
+					item = roomData.items[item];
 						
 					newItem.id = item.id;
 					newItem.setAttribute('width', item.width);

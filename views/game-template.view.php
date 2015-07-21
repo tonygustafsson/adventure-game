@@ -31,9 +31,9 @@
 			<?=$partial?>
 		<?php endif; ?>
 		
-		<?php if (isset($room_json)): ?>
+		<?php if (isset($room_data)): ?>
 			<script type="text/javascript">
-				var roomJSON = <?=$room_json?>
+				var roomData = <?=$room_data?>
 			</script>
 		<?php endif; ?>
 		

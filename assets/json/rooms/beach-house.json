@@ -1,110 +1,127 @@
 {
-	"room": {
-		"width": 1920,
-		"height": 1200,
-		"x": 0,
-		"y": 0,
-		"image": "room.jpg",
-		"title": "Beach House",
-		"description": "You are standing in beautiful room with a view of the beach, just a few meeters outside. You are feeling more relaxed already."
-	},
-	"items": {
-		"flower": {
-			"id": "flower",
-			"width": 328,
-			"height": 468,
-			"x": 1517,
-			"y": 370,
-			"image": "flower.jpg",
-			"title": "Flower",
-			"description": "A white lily are placed in the room and gives of a nice smell.",
-			"takable": true,
-			"smellable": true,
-			"smellMessage": "A wonderful mix of sweet and fruity."
-		},
-		"coffee": {
-			"id": "coffee",
-			"width": 216,
-			"height": 182,
-			"x": 880,
-			"y": 905,
-			"image": "coffee.jpg",
-			"title": "Coffee cup",
-			"description": "Hm, someone has just left a cup of coffee for you? How nice of them.",
-			"takable": true,
-			"smellable": true,
-			"smellMessage": "Oh that scent of Java in the morning!"
-		},
-		"sink": {
-			"id": "sink",
-			"width": 78,
-			"height": 41,
-			"x": 1300,
-			"y": 532,
-			"image": "sink.jpg",
-			"title": "Sink",
-			"description": "This green sink seems to have been cleaned recently...",
-			"takable": true
-		},
-		"television": {
-			"id": "television",
-			"width": 260,
-			"height": 230,
-			"x": 172,
-			"y": 538,
-			"title": "Television",
-			"description": "The television seems to be turned of at the moment.",
-			"takable": false,
-			"usable": true,
-			"useMessage": "I don't think you should turn on the TV right now, someone might here you?"
-		},
-		"egg": {
-			"id": "egg",
-			"width": 87,
-			"height": 92,
-			"x": 1198,
-			"y": 932,
-			"title": "Egg",
-			"description": "This brown egg does look mighty fine, but you are not hungry."
-		},
-		"sky": {
-			"id": "sky",
-			"width": 350,
-			"height": 168,
-			"x": 555,
-			"y": 297,
-			"title": "Sky",
-			"description": "The weather seems nice today, how about going for a swim?"
-		},
-		"bed": {
-			"id": "bed",
-			"width": 157,
-			"height": 115,
-			"x": 908,
-			"y": 721,
-			"title": "Bed",
-			"description": "Oh, nicely done bed! It's to bright to sleep right now..."
-		},
-		"sunbed": {
-			"id": "sunbed",
-			"width": 203,
-			"height": 112,
-			"x": 612,
-			"y": 652,
-			"title": "Sunbed",
-			"description": "Oh my god, that looks comfy enough for you. How about a day just chillin'?",
-			"takable": false,
-			"usable": true,
-			"useMessage": "I don't think they want to use their sunbed..."
-		},
-		"buns": {
-			"id": "buns",
-			"width": 242,
-			"height": 163,
-			"x": 663,
-			"y": 1036,
-			"title": "Buns",
-			"description": "Hm do you think they will notice if I only take one?"
-		}
-	}
+    "description": "You are standing in beautiful room with a view of the beach, just a few meeters outside. You are feeling more relaxed already.",
+    "height": "1200",
+    "image": "room.jpg",
+    "items": {
+        "flower": {
+            "width": "328",
+            "height": "468",
+            "x": "1517",
+            "y": "370",
+            "image": "flower.jpg",
+            "title": "Flower",
+            "description": "A white lily are placed in the room and gives of a nice smell.",
+            "id": "flower",
+            "takable": true,
+            "smellable": true,
+            "smellMessage": "A wonderful mix of sweet and fruity.",
+            "useMessage": ""
+        },
+        "coffee": {
+            "width": "216",
+            "height": "182",
+            "x": "880",
+            "y": "905",
+            "image": "coffee.jpg",
+            "title": "Coffee cup",
+            "description": "Hm, someone has just left a cup of coffee for you? How nice of them.",
+            "id": "coffee",
+            "takable": true,
+            "smellable": true,
+            "smellMessage": "Oh that scent of Java in the morning!",
+            "useMessage": ""
+        },
+        "sink": {
+            "width": "78",
+            "height": "41",
+            "x": "1300",
+            "y": "532",
+            "image": "sink.jpg",
+            "title": "Sink",
+            "description": "This green sink seems to have been cleaned recently...",
+            "id": "sink",
+            "takable": true,
+            "smellMessage": "",
+            "useMessage": ""
+        },
+        "television": {
+            "width": "260",
+            "height": "230",
+            "x": "172",
+            "y": "538",
+            "image": "",
+            "title": "Television",
+            "description": "The television seems to be turned of at the moment.",
+            "id": "television",
+            "smellMessage": "",
+            "useMessage": "I don't think you should turn on the TV right now, someone might here you?",
+            "usable": true
+        },
+        "egg": {
+            "width": "87",
+            "height": "92",
+            "x": "1198",
+            "y": "932",
+            "image": "",
+            "title": "Egg",
+            "description": "This brown egg does look mighty fine, but you are not hungry.",
+            "id": "egg",
+            "smellMessage": "",
+            "useMessage": ""
+        },
+        "sky": {
+            "width": "350",
+            "height": "168",
+            "x": "555",
+            "y": "297",
+            "image": "",
+            "title": "Sky",
+            "description": "The weather seems nice today, how about going for a swim?",
+            "id": "sky",
+            "smellMessage": "",
+            "useMessage": ""
+        },
+        "bed": {
+            "width": "157",
+            "height": "115",
+            "x": "908",
+            "y": "721",
+            "image": "",
+            "title": "Bed",
+            "description": "Oh, nicely done bed! It's to bright to sleep right now...",
+            "id": "bed",
+            "smellMessage": "",
+            "useMessage": ""
+        },
+        "sunbed": {
+            "width": "203",
+            "height": "112",
+            "x": "612",
+            "y": "652",
+            "image": "",
+            "title": "Sunbed",
+            "description": "Oh my god, that looks comfy enough for you. How about a day just chillin'?",
+            "id": "sunbed",
+            "smellMessage": "",
+            "useMessage": "I don't think they want to use their sunbed...",
+            "usable": true
+        },
+        "buns": {
+            "width": "242",
+            "height": "163",
+            "x": "663",
+            "y": "1036",
+            "image": "",
+            "title": "Buns",
+            "description": "Hm do you think they will notice if I only take one?",
+            "id": "buns",
+            "smellable": true,
+            "smellMessage": "Oh they smell lovely, gimmi some buns!!",
+            "useMessage": ""
+        }
+    },
+    "title": "Beach House",
+    "width": "1920",
+    "x": "0",
+    "y": "0"
 }

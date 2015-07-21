@@ -1,0 +1,45 @@
+body {
+	margin: 1em 3em;
+	font-family: "Trebuchet MS", Helvetica, sans-serif;
+	font-size: 16px;
+}
+
+label {
+	display: block;
+	font-weight: bold;
+	text-transform: capitalize;
+	padding-top: 1.5em;
+}
+
+input[type=text], input[type=number] {
+	display: block;
+	width: 100%;
+}
+
+input[type=submit] {
+	display: block;
+	padding: .5em 1em;
+}
+
+fieldset {
+	margin: 3em 0;
+	padding: 1em 2em 2em 2em;
+}
+
+legend {
+	font-size: 200%;
+}
+
+.description {
+	margin: .2em 0;
+	font-style: italic;
+}
+
+@media screen and (min-width: 1300px) {
+	fieldset {
+		display: inline-block;
+		width: calc(50% - 5em);
+		margin: 2em 1em;
+		box-sizing: border-box;
+	}	
+}
