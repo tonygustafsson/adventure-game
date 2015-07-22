@@ -1,0 +1,78 @@
+{
+    "description": "You are standing in the lobby. It's got some old chairs and you seem to be alone in here.",
+    "height": "1200",
+    "image": "room.jpg",
+    "items": {
+        "mug": {
+            "width": "153",
+            "height": "224",
+            "x": "845",
+            "y": "822",
+            "image": "mug.jpg",
+            "title": "Mug",
+            "description": "This mug seems to contain some left over coffee.",
+            "id": "mug",
+            "takable": true,
+            "smellable": true,
+            "smellMessage": "Ew, it's cold!",
+            "useMessage": ""
+        },
+        "candles": {
+            "width": "88",
+            "height": "207",
+            "x": "701",
+            "y": "516",
+            "image": "candles.jpg",
+            "title": "Candles",
+            "description": "The candles are still burning, but no one seems to be near. Hm.",
+            "id": "candles",
+            "takable": true,
+            "smellMessage": "",
+            "useMessage": "Watch out, no need to set the whole room on fire?",
+            "usable": true
+        },
+        "statue": {
+            "width": "203",
+            "height": "315",
+            "x": "1261",
+            "y": "312",
+            "image": "statue.jpg",
+            "title": "Statue",
+            "description": "This seems valuable, can I really take this?",
+            "id": "statue",
+            "takable": true,
+            "smellMessage": "",
+            "useMessage": "Nopes, no hidden door found when trying to press the statues head.",
+            "usable": true
+        },
+        "painting": {
+            "width": "140",
+            "height": "105",
+            "x": "15",
+            "y": "307",
+            "image": "",
+            "title": "Painting",
+            "description": "What an ugly painting... does not belong here at all!",
+            "id": "painting",
+            "smellMessage": "",
+            "useMessage": "It doesn't do anything...",
+            "usable": ""
+        },
+        "lamp": {
+            "width": "152",
+            "height": "107",
+            "x": "544",
+            "y": "361",
+            "image": "",
+            "title": "Lamp",
+            "description": "It's light outside, why is it on?",
+            "id": "lamp",
+            "smellMessage": "",
+            "useMessage": ""
+        }
+    },
+    "title": "The lobby",
+    "width": "1920",
+    "x": "0",
+    "y": "0"
+}

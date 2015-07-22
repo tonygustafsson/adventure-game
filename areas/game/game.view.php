@@ -16,7 +16,7 @@
 	</a>
 </aside>
 
-<div id="game" class="game" data-item-images-root="<?=$this->opus->url('assets/images/items/beach-house')?>" data-room-json="<?=$this->opus->url('assets/json/rooms/beach-house.json')?>">	
+<div id="game" class="game" data-item-images-root="<?=$room_images_root?>">	
 	<svg
 	   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 	   xmlns:svg="http://www.w3.org/2000/svg"
@@ -44,7 +44,7 @@
 		</div>
 		
 		<a href="#" id="expand-action-panel" class="expand-action-panel">
-			Beach House
+			<?=$room_data->title?>
 			<a id="expand-settings-panel" class="expand-settings-panel"><img src="<?=$this->opus->url('assets/images/settings.png')?>" alt="Settings"></a>
 		</a>
 	</div>
