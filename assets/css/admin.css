@@ -16,9 +16,10 @@ input[type=text], input[type=number] {
 	width: 100%;
 }
 
-input[type=submit] {
+input[type=submit], input[type=button] {
 	display: block;
 	padding: .5em 1em;
+	margin: .5em;
 }
 
 fieldset {
@@ -33,6 +34,10 @@ legend {
 .description {
 	margin: .2em 0;
 	font-style: italic;
+}
+
+.structural {
+	display: none;
 }
 
 @media screen and (min-width: 1300px) {
