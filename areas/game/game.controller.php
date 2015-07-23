@@ -24,7 +24,7 @@
 
 			$partial_data['room'] = $room;
 			$partial_data['room_data'] = json_decode($view_data['room_data']);
-			$partial_data['room_images_root'] = $this->opus->url('assets/images/items/' . $room);
+			$partial_data['room_images_root'] = $this->opus->url('assets/images/items/');
 			$view_data['partial'] = $this->opus->load->view('game', $partial_data, TRUE);
 			
 			$this->opus->load->view('game-template', $view_data);
