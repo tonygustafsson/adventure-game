@@ -38,16 +38,18 @@ var game = (function () {
 			},
 			initialize: function initialize () {
 				actions.buttons.take().addEventListener('click', function () {
-					actions.take(room.selectedItem());
+						actions.take(room.selectedItem());
 				});
 				actions.buttons.leave().addEventListener('click', function () {
 					actions.leave(inventory.selectedItem());
 				});
 				actions.buttons.use().addEventListener('click', function () {
-					actions.use(room.selectedItem());
+					var item = room.selectedItem() ? room.selectedItem() : inventory.selectedItem();
+					actions.use(item);
 				});
 				actions.buttons.smell().addEventListener('click', function () {
-					actions.smell(room.selectedItem());
+					var item = room.selectedItem() ? room.selectedItem() : inventory.selectedItem();
+					actions.smell(item);
 				});
 				actions.buttons.reset().addEventListener('click', function () {
 					actions.reset();
@@ -121,33 +123,46 @@ var game = (function () {
 		items: document.getElementById("inventory-items").childNodes,
 		selectedItem: function selectedItem () {
 			var element = document.querySelector('#inventory-items .selected');
-			return room.getItemFromElement(element);
+			return inventory.getItemFromStorage(element.getAttribute('data-item-reference'));
 		},
 		getItemElement: function getItemInventoryElement (item) {
 			var elementId = "item-reference-" + item.id;
 			return document.getElementById(elementId);	
 		},
+		getItemFromStorage: function getItemFromStorage (itemId) {
+			return JSON.parse(localStorage.getItem(inventory.getInventoryId(itemId)));
+		},
 		select: function select (item) {
 			var inventoryElement = inventory.getItemElement(item),
-				item = document.getElementById(inventoryElement.getAttribute('data-item-reference')),
-				itemInfo = room.getItemFromElement(item);
+				itemElement = document.getElementById(inventoryElement.getAttribute('data-item-reference')),
+				item = inventory.getItemFromStorage(itemElement.id);
 			
 			inventory.deselectAll();
 			inventoryElement.classList.add('selected');
 			
 			room.deselectAllItems();
-			room.description.add(itemInfo);
+			room.description.add(item);
 			room.description.show();
 			
 			panels.action.show();
 			
 			actions.buttons.deactivateAll();
 			actions.buttons.activate(actions.buttons.leave());
+			
+			if (item.usable) {
+				actions.buttons.activate(actions.buttons.use());
+			}
+			if (item.smellable) {
+				actions.buttons.activate(actions.buttons.smell());
+			}
 		},
 		deselectAll: function deselectAll () {
 			[].forEach.call(inventory.items, function (item) {
 				item.classList.remove('selected');
 			});
+		},
+		getInventoryId: function getInventoryId (itemName) {
+			return "item#" + document.getElementById('game').getAttribute('data-room') + "#" + itemName;
 		},
 		save: function save (item) {
 			var newImage = document.createElement('img');
@@ -312,23 +327,19 @@ var game = (function () {
 		},
 		image: "svg/room.svg",
 		selectedItem: function selectedItem () {
-			var element = room.container().querySelector('.selected');
-			return room.getItemFromElement(element);
-		},
-		getItemElement: function getItemElement (item) {
-			var elementId = item.id;
-			return document.getElementById(elementId);	
-		},
-		getItemFromElement: function getItemFromElement (element) {
-			var foundElement;
+			var element = room.container().querySelector('.selected'),
+				foundItem;
+			
+			if (!element)
+				return;
 			
 			for (var item in roomData.items) {
 				if (element.id === roomData.items[item].id || element.getAttribute('data-item-reference') === roomData.items[item].id) {
-					foundElement = roomData.items[item];
+					foundItem = roomData.items[item];
 				}
 			}
 			
-			return foundElement;
+			return foundItem;
 		},
 		getItemImage: function getItemImage (image) {
 			var itemImagesRoot = document.getElementById('game').getAttribute('data-item-images-root');
@@ -344,7 +355,7 @@ var game = (function () {
 			room.deselectAllItems();
 			actions.buttons.deactivateAll();
 			inventory.deselectAll();
-			room.getItemElement(item).classList.add('selected');
+			document.getElementById(item.id).classList.add('selected');
 			
 			if (item.takable) {
 				actions.buttons.activate(actions.buttons.take());
@@ -428,12 +439,13 @@ var game = (function () {
 		},
 		showItem: function showItem (item) {
 			document.getElementById(item.id).classList.remove('invisible');
-			localStorage.removeItem(item.id);
+			localStorage.removeItem(inventory.getInventoryId(item.id));
 		},
 		hideItem: function hideItem (item) {
 			room.deselectItem(item);
 			document.getElementById(item.id).classList.add('invisible');
-			localStorage.setItem(item.id, "invisible");
+			
+			localStorage.setItem(inventory.getInventoryId(item.id), JSON.stringify(item));
 		},
 		checkLocation: function checkLocation () {
 			var localRoom = localStorage.getItem('room') !== null ? localStorage.getItem('room') : "beach-house",
@@ -503,7 +515,9 @@ var game = (function () {
 						});
 					})(item);
 				
-					if (localStorage.getItem(item.id) === "invisible") {
+					var storedItem = inventory.getItemFromStorage(item.id);
+				
+					if (storedItem) {
 						newItem.classList.add('invisible');
 						inventory.save(item);
 					}
