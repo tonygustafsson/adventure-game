@@ -10,13 +10,19 @@
 
 <aside id="map-panel" class="map-panel">
 	<h2>Map</h2>
+	
+	<p>
+		<a href="<?=$this->opus->url('game/change_room/beach-house')?>" data-room="beach-house" class="change-room-link">Beach House</a><br>
+		<a href="<?=$this->opus->url('game/change_room/lobby')?>" data-room="lobby" class="change-room-link">Lobby</a>	
+	</p>
+	
 	<img src="<?=$this->opus->url('assets/images/map.jpg')?>" class="full-width">
 	<a href="#" id="expand-map-panel" class="expand-map-panel">
 		Map
 	</a>
 </aside>
 
-<div id="game" class="game" data-item-images-root="<?=$room_images_root?>">	
+<div id="game" class="game" data-base-url="<?=$this->opus->url('/')?>" data-room="<?=$room?>" data-item-images-root="<?=$room_images_root?>">	
 	<svg
 	   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 	   xmlns:svg="http://www.w3.org/2000/svg"

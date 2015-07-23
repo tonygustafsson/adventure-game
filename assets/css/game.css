@@ -17,6 +17,10 @@ h1 {
 	margin: .5em;
 }
 
+a {
+	color: #fff;
+}
+
 .game {
 	float: left;
 	width: 92%;

@@ -60,6 +60,24 @@ var game = (function () {
 				}
 			}
 		},
+		room: {
+			activate: function activate (e) {
+				e.preventDefault();
+				
+				var link = e.target,
+					href = link.getAttribute('href'),
+					wantedRoom = link.getAttribute('data-room');
+					
+				localStorage.setItem('room', wantedRoom);
+				window.location.assign(href);
+			},
+			initChangeRoomsLinks: function initialize () {
+				var changeRoomLinks = document.querySelectorAll('.change-room-link');
+				for (var i = 0; i < changeRoomLinks.length; i++) {
+					changeRoomLinks[i].addEventListener('click', actions.room.activate);
+				}
+			}
+		},
 		take: function take (item) {
 			room.hideItem(item);
 			inventory.save(item);
@@ -417,12 +435,22 @@ var game = (function () {
 			document.getElementById(item.id).classList.add('invisible');
 			localStorage.setItem(item.id, "invisible");
 		},
-		createSvgImage: function createSvgImage (item) {
+		checkLocation: function checkLocation () {
+			var localRoom = localStorage.getItem('room') !== null ? localStorage.getItem('room') : "beach-house",
+				sessionRoom = document.getElementById('game').getAttribute('data-room');
 			
+			if (localRoom !== sessionRoom) {
+				// Local storage room does not match session room, redirect to change session
+				var url = document.getElementById('game').getAttribute('data-base-url') + '/game/change_room/' + localRoom;
+				localStorage.setItem('room', localRoom);
+				window.location.assign(url);
+			}
+			
+			localStorage.setItem('room', localRoom);
 		},
 		createRoom: function createRoom () {
 			var group = document.getElementsByTagName('g')[0],
-				background = document.createElementNS('http://www.w3.org/2000/svg','image');
+				background = document.createElementNS('http://www.w3.org/2000/svg', 'image');
 			
 			background.id = 'room-background';
 			background.setAttribute('width', roomData.width);
@@ -485,9 +513,11 @@ var game = (function () {
 			}
 		},
 		load: function load () {
+			room.checkLocation();
 			room.createRoom();
 			room.createItems();
 			actions.buttons.initialize();
+			actions.room.initChangeRoomsLinks();
 		}
 	};	
 	
